@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AppIcon } from "@/components/ui/icon";
 import { useCrmSimulationDemoState } from "@/lib/demo-state/use-findings-demo-state";
+import { KPI_COPY } from "@/lib/ui-copy";
 
 type CrmSimulationPanelProps = {
   openDealsCount: number;
@@ -82,7 +83,7 @@ export function CrmSimulationPanel({
 
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <div className="rounded-lg border border-line bg-white p-4">
-              <p className="app-overline">Simulated records</p>
+              <p className="app-overline">{KPI_COPY.openDealsScanned.label}</p>
               <p className="mt-2 text-[28px] font-bold tracking-[-0.03em] text-foreground">
                 {openDealsCount.toLocaleString()}
               </p>

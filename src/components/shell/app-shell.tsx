@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SidebarNav } from "@/components/shell/sidebar-nav";
 import { Badge } from "@/components/ui/badge";
 import { AppIcon } from "@/components/ui/icon";
+import { SIMULATION_MODE_LABEL } from "@/lib/ui-copy";
 
 type AppShellProps = {
   children: ReactNode;
@@ -54,10 +55,6 @@ export function AppShell({ children }: AppShellProps) {
                 <span className="text-[17px] font-bold tracking-tight text-foreground">
                   Hygiene Bot
                 </span>
-                <div className="flex items-center gap-2 rounded-full bg-surface-muted px-3 py-1.5 text-[12px] font-medium text-muted">
-                  <span className="h-2 w-2 rounded-full bg-brand" />
-                  CRM Simulation Mode
-                </div>
               </div>
               <div className="relative hidden lg:block">
                 <AppIcon name="search" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -77,8 +74,8 @@ export function AppShell({ children }: AppShellProps) {
                 <AppIcon name="help" className="h-4 w-4" />
               </button>
               <div className="hidden h-5 w-px bg-line sm:block" />
-              <Badge tone="brand" className="hidden sm:inline-flex">
-                CRM Simulation Mode
+              <Badge tone="brand">
+                {SIMULATION_MODE_LABEL}
               </Badge>
               <div className="flex h-8 w-8 items-center justify-center rounded-full border border-line bg-white text-[11px] font-semibold text-foreground">
                 EU

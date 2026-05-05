@@ -38,8 +38,8 @@ export function SidebarNav({ mobile = false }: SidebarNavProps) {
                   ? "inline-flex shrink-0 items-center gap-2 rounded-full bg-brand-soft px-3 py-2 text-[13px] font-semibold text-brand"
                   : "inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-2 text-[13px] font-medium text-muted hover:bg-surface-muted hover:text-foreground"
                 : isActive
-                  ? "flex items-center gap-3 border-l-2 border-brand bg-white/6 px-4 py-3 text-white"
-                  : "flex items-center gap-3 border-l-2 border-transparent px-4 py-3 text-shell-muted hover:bg-white/5 hover:text-shell-foreground",
+                  ? "flex items-center gap-3 border-l-2 border-brand bg-white/8 px-4 py-3 text-white"
+                  : "flex items-center gap-3 border-l-2 border-transparent px-4 py-3 text-white hover:bg-white/6 hover:text-white",
             )}
           >
             <AppIcon
@@ -52,10 +52,16 @@ export function SidebarNav({ mobile = false }: SidebarNavProps) {
                     : "text-muted"
                   : isActive
                     ? "text-white"
-                    : "text-shell-muted",
+                    : "text-white",
               )}
             />
-            <span className={cx(mobile ? "" : "text-[13px]", "font-medium")}>
+            <span
+              className={cx(
+                mobile ? "" : "text-[13px]",
+                "font-medium",
+                !mobile && "text-white",
+              )}
+            >
               {item.title}
             </span>
           </Link>

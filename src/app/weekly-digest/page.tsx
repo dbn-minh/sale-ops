@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { WeeklyDigestWorkspace } from "@/components/weekly-digest/weekly-digest-workspace";
@@ -11,7 +10,6 @@ export default function WeeklyDigestPage() {
         eyebrow="Weekly Digest"
         title="Weekly CRM Hygiene Digest"
         description={`Find pipeline risks before revenue slips. A Monday morning view of pipeline risk and recommended actions as of ${formatIsoDate(crmSimulationWeeklyDigest.reference_date)}.`}
-        badge={<Badge tone="brand">CRM Simulation Mode</Badge>}
         actions={
           <>
             <Button variant="secondary" icon="download">

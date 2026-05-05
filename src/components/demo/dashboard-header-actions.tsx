@@ -13,7 +13,7 @@ export function DashboardHeaderActions({
   totalFindings,
 }: DashboardHeaderActionsProps) {
   const [message, setMessage] = useState(
-    "Recommended next action: review critical findings first.",
+    "Recommended next action: review critical / high findings first.",
   );
 
   return (

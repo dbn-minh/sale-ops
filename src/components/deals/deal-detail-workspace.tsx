@@ -106,7 +106,7 @@ export function DealDetailWorkspace({ model }: DealDetailWorkspaceProps) {
             <MetaStat label="Owner" value={model.owner.name} helper={model.owner.team} />
             <MetaStat label="Stage" value={model.stage} helper={`${model.probability}% confidence`} />
             <MetaStat label="Amount" value={currencyFormatter.format(model.amount)} helper={model.pipeline} />
-            <MetaStat label="Close date" value={formatIsoDate(model.close_date)} helper="CRM Simulation Mode" />
+            <MetaStat label="Close date" value={formatIsoDate(model.close_date)} helper="Seeded reference schedule" />
           </div>
         </div>
 
@@ -184,7 +184,7 @@ export function DealDetailWorkspace({ model }: DealDetailWorkspaceProps) {
           <section className="app-panel overflow-hidden">
             <div className="flex items-center justify-between border-b border-line px-5 py-4">
               <div>
-                <p className="app-overline">Critical findings</p>
+                <p className="app-overline">Linked findings</p>
                 <h2 className="mt-1 text-[18px] font-semibold tracking-[-0.02em] text-foreground">
                   Linked deal findings
                 </h2>

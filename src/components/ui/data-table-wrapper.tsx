@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Children, type ReactNode } from "react";
 import { cx } from "@/lib/cx";
 
 type DataTableWrapperProps = {
@@ -6,10 +6,13 @@ type DataTableWrapperProps = {
   description: string;
   columns: string[];
   children?: ReactNode;
+  mobileCards?: ReactNode;
   emptyState?: ReactNode;
   headerActions?: ReactNode;
   footer?: ReactNode;
   className?: string;
+  stickyHeader?: boolean;
+  stickyHeaderOffsetClassName?: string;
 };
 
 export function DataTableWrapper({
@@ -17,11 +20,18 @@ export function DataTableWrapper({
   description,
   columns,
   children,
+  mobileCards,
   emptyState,
   headerActions,
   footer,
   className,
+  stickyHeader = false,
+  stickyHeaderOffsetClassName = "top-0",
 }: DataTableWrapperProps) {
+  const hasMobileCards = Children.count(mobileCards) > 0;
+  const stickyOffsetClassName =
+    stickyHeaderOffsetClassName === "top-16" ? "top-16" : "top-0";
+
   return (
     <section className={cx("app-panel overflow-hidden", className)}>
       <div className="flex flex-col gap-4 border-b border-line px-5 py-4 sm:flex-row sm:items-start sm:justify-between sm:px-6">
@@ -33,12 +43,26 @@ export function DataTableWrapper({
             {description}
           </p>
         </div>
-        {headerActions ? <div className="flex items-center gap-3">{headerActions}</div> : null}
+        {headerActions ? (
+          <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto sm:justify-end">
+            {headerActions}
+          </div>
+        ) : null}
       </div>
 
-      <div className="app-scrollbar overflow-x-auto">
+      {hasMobileCards ? (
+        <div className="space-y-3 p-4 md:hidden">{mobileCards}</div>
+      ) : null}
+
+      <div className={cx("app-scrollbar overflow-x-auto", hasMobileCards ? "hidden md:block" : "")}>
         <table className="min-w-full border-collapse">
-          <thead className="bg-surface-muted">
+          <thead
+            className={cx(
+              "bg-surface-muted",
+              stickyHeader && "sticky z-10",
+              stickyHeader && stickyOffsetClassName,
+            )}
+          >
             <tr>
               {columns.map((column) => (
                 <th

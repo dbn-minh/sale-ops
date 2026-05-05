@@ -4,7 +4,12 @@ import { SummaryListCard } from "@/components/dashboard/summary-list-card";
 import { Badge } from "@/components/ui/badge";
 import { DataTableWrapper } from "@/components/ui/data-table-wrapper";
 import { PageHeader } from "@/components/ui/page-header";
-import { crmSimulationDashboard, crmSimulationData } from "@/lib/data/demo-data";
+import {
+  crmSimulationDashboard,
+  crmSimulationData,
+  crmSimulationDealsWorkspace,
+} from "@/lib/data/demo-data";
+import { KPI_COPY } from "@/lib/ui-copy";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -43,23 +48,22 @@ export default function Home() {
   const criticalMetric = crmSimulationDashboard.kpis.find(
     (metric) => metric.label === "Critical/high findings",
   );
+  const totalFindingsMetric = crmSimulationDashboard.kpis.find(
+    (metric) => metric.label === "Total findings",
+  );
   const nextStepMetric = crmSimulationDashboard.kpis.find(
     (metric) => metric.label === "Deals with no next step",
   );
-  const averageHygieneScore = Math.round(
-    crmSimulationDashboard.owner_leaderboard.reduce(
-      (total, owner) => total + owner.hygiene_score,
-      0,
-    ) / Math.max(crmSimulationDashboard.owner_leaderboard.length, 1),
-  );
+  const uniqueDealsAtRiskCount = crmSimulationDealsWorkspace.list_rows.filter(
+    (deal) => deal.open_findings_count > 0,
+  ).length;
 
   return (
     <div className="space-y-8">
       <PageHeader
         eyebrow="Dashboard"
         title="Executive Overview"
-        description={`Find pipeline risks before revenue slips. This dashboard turns CRM Simulation Mode into a manager-ready view of pipeline value at risk, critical findings, and deals needing attention as of ${formatIsoDate(crmSimulationDashboard.reference_date)}.`}
-        badge={<Badge tone="brand">CRM Simulation Mode</Badge>}
+        description={`Find pipeline risks before revenue slips. This dashboard turns the current hygiene scan into a manager-ready view of pipeline value at risk, generated findings, and deals needing attention as of ${formatIsoDate(crmSimulationDashboard.reference_date)}.`}
         actions={
           <DashboardHeaderActions
             openDealsCount={openDealsCount}
@@ -78,12 +82,12 @@ export default function Home() {
               {pipelineValueAtRisk?.value ?? "$0"}
             </p>
             <Badge tone="neutral" className="border-white/10 bg-white/10 text-white">
-              Critical signal
+              Deduplicated
             </Badge>
           </div>
           <p className="mt-3 max-w-sm text-[14px] leading-6 text-indigo-50/90">
-            Across {crmSimulationDashboard.top_risky_deals.length} active deals
-            with concentrated revenue exposure.
+            Across {uniqueDealsAtRiskCount} unique open deals at risk, with each
+            risky deal counted once.
           </p>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             <div className="rounded-lg border border-white/10 bg-white/10 p-4">
@@ -91,7 +95,7 @@ export default function Home() {
                 Recommended next action
               </p>
               <p className="mt-2 text-[13px] leading-6 text-white">
-                Review critical findings first, then create follow-up task
+                Review critical / high findings first, then create follow-up task
                 coverage for late-stage deals.
               </p>
             </div>
@@ -109,20 +113,20 @@ export default function Home() {
 
         <div className="col-span-12 grid gap-4 md:grid-cols-3 xl:col-span-8">
           <MetricPanel
-            label={openDealsMetric?.label ?? "Open deals scanned"}
+            label={KPI_COPY.openDealsScanned.label}
             value={openDealsMetric?.value ?? "0"}
-            helper="Every open opportunity included in the hygiene scan."
+            helper={KPI_COPY.openDealsScanned.description}
           />
           <MetricPanel
-            label="Critical findings"
+            label={KPI_COPY.generatedFindings.label}
+            value={totalFindingsMetric?.value ?? "0"}
+            helper={KPI_COPY.generatedFindings.description}
+          />
+          <MetricPanel
+            label={KPI_COPY.criticalHighFindings.label}
             value={criticalMetric?.value ?? "0"}
-            helper="Issues likely to affect forecast confidence or deal momentum."
+            helper={KPI_COPY.criticalHighFindings.description}
             accent="critical"
-          />
-          <MetricPanel
-            label="Average hygiene score"
-            value={`${averageHygieneScore}/100`}
-            helper="Blended owner hygiene score from the current manager view."
           />
           <MetricPanel
             label={nextStepMetric?.label ?? "Deals with no next step"}
@@ -132,9 +136,9 @@ export default function Home() {
             className="md:col-span-2"
           />
           <SummaryCard
-            title="Critical findings"
-            value={criticalMetric?.value ?? "0"}
-            description="Use the Findings queue to create follow-up task coverage and document manager review."
+            title={KPI_COPY.uniqueDealsAtRisk.label}
+            value={String(uniqueDealsAtRiskCount)}
+            description={KPI_COPY.uniqueDealsAtRisk.description}
           />
         </div>
       </section>
@@ -159,7 +163,7 @@ export default function Home() {
         <div className="space-y-6 xl:col-span-8">
           <SummaryListCard
             title="Findings by severity"
-            description="Critical and high findings surface the most urgent pipeline risks before they slip into forecast surprises."
+            description="Critical findings show severity-critical issues only. The combined critical / high count is broken out separately in the KPI row above."
             items={crmSimulationDashboard.findings_by_severity}
           />
 
@@ -229,7 +233,7 @@ export default function Home() {
       <section className="grid gap-6 xl:grid-cols-[1fr_1.2fr]">
         <SummaryListCard
           title="Pipeline value at risk by owner"
-          description="Use this view to see where exposure is concentrated across the sales team and where coaching should begin."
+          description="This owner rollup uses the same deduplicated open-deal exposure shown in the dashboard headline."
           items={crmSimulationDashboard.pipeline_value_at_risk_by_owner}
         />
 
@@ -240,7 +244,7 @@ export default function Home() {
             "Owner",
             "Open deals",
             "Total findings",
-            "Critical findings",
+            KPI_COPY.criticalFindings.label,
             "Pipeline at risk",
             "Hygiene score",
           ]}

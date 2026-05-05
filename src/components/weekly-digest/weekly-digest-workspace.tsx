@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { DataTableWrapper } from "@/components/ui/data-table-wrapper";
 import { useCrmSimulationDemoState } from "@/lib/demo-state/use-findings-demo-state";
 import type { WeeklyDigestModel } from "@/lib/data/weekly-digest";
+import { KPI_COPY } from "@/lib/ui-copy";
 
 type WeeklyDigestWorkspaceProps = {
   model: WeeklyDigestModel;
@@ -53,21 +54,36 @@ export function WeeklyDigestWorkspace({ model }: WeeklyDigestWorkspaceProps) {
   return (
     <div className="space-y-6">
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
-        <DigestMetric label="Scanned deals" value={String(model.scanned_deals_count)} />
-        <DigestMetric label="Open deals" value={String(model.open_deals_count)} />
-        <DigestMetric label="Issues found" value={String(model.issues_found)} />
         <DigestMetric
-          label="Critical findings"
+          label={KPI_COPY.dealsScanned.label}
+          value={String(model.scanned_deals_count)}
+          description={KPI_COPY.dealsScanned.description}
+        />
+        <DigestMetric
+          label="Open deals"
+          value={String(model.open_deals_count)}
+          description={KPI_COPY.openDealsScanned.description}
+        />
+        <DigestMetric
+          label={KPI_COPY.generatedFindings.label}
+          value={String(model.issues_found)}
+          description={KPI_COPY.generatedFindings.description}
+        />
+        <DigestMetric
+          label={KPI_COPY.criticalHighFindings.label}
           value={String(model.critical_high_findings)}
+          description={KPI_COPY.criticalHighFindings.description}
           accent="critical"
         />
         <DigestMetric
-          label="Value at risk"
+          label={KPI_COPY.pipelineValueAtRiskIssueRollup.label}
           value={currencyFormatter.format(model.pipeline_value_at_risk)}
+          description={KPI_COPY.pipelineValueAtRiskIssueRollup.description}
         />
         <DigestMetric
-          label="Tasks created"
+          label={KPI_COPY.taskCreatedFindings.label}
           value={String(taskCreatedFindings)}
+          description={KPI_COPY.taskCreatedFindings.description}
           accent="brand"
         />
       </section>
@@ -290,10 +306,12 @@ export function WeeklyDigestWorkspace({ model }: WeeklyDigestWorkspaceProps) {
 function DigestMetric({
   label,
   value,
+  description,
   accent = "neutral",
 }: {
   label: string;
   value: string;
+  description: string;
   accent?: "neutral" | "critical" | "brand";
 }) {
   return (
@@ -318,6 +336,7 @@ function DigestMetric({
       >
         {value}
       </p>
+      <p className="mt-2 text-[12px] leading-6 text-muted">{description}</p>
     </article>
   );
 }

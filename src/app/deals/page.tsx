@@ -5,6 +5,7 @@ import { DataTableWrapper } from "@/components/ui/data-table-wrapper";
 import { AppIcon } from "@/components/ui/icon";
 import { PageHeader } from "@/components/ui/page-header";
 import { crmSimulationDealsWorkspace } from "@/lib/data/demo-data";
+import { KPI_COPY } from "@/lib/ui-copy";
 
 const severityToneMap = {
   critical: "critical",
@@ -52,7 +53,6 @@ export default function DealsPage() {
         eyebrow="Deals"
         title="Deals Pipeline"
         description="Inspect deal health, monitor recent activity, and ensure adequate follow-up coverage across all open opportunities."
-        badge={<Badge tone="brand">CRM Simulation Mode</Badge>}
         actions={
           <>
             <Button variant="secondary" icon="download">
@@ -69,16 +69,23 @@ export default function DealsPage() {
         <SummaryMetric
           label="Total pipeline value"
           value={currencyFormatter.format(totalPipelineValue)}
+          helper="Total value of open deals currently shown in the pipeline workspace."
         />
         <SummaryMetric
-          label="Deals at risk"
+          label={KPI_COPY.uniqueDealsAtRisk.label}
           value={String(dealsAtRisk)}
+          helper={KPI_COPY.uniqueDealsAtRisk.description}
           accent="critical"
         />
-        <SummaryMetric label="Open findings" value={String(openFindings)} />
+        <SummaryMetric
+          label={KPI_COPY.dealLinkedFindings.label}
+          value={String(openFindings)}
+          helper={KPI_COPY.dealLinkedFindings.description}
+        />
         <SummaryMetric
           label="Stalled deals"
           value={String(stalledDeals)}
+          helper="Open deals currently carrying a stale-deal risk signal."
           accent="warning"
         />
       </section>
@@ -108,8 +115,13 @@ export default function DealsPage() {
           </div>
         }
         footer={`Showing 1 to ${Math.min(10, crmSimulationDealsWorkspace.list_rows.length)} of ${crmSimulationDealsWorkspace.list_rows.length} entries.`}
+        mobileCards={crmSimulationDealsWorkspace.list_rows.slice(0, 10).map((deal) => (
+          <DealMobileCard key={deal.deal_id} deal={deal} />
+        ))}
+        stickyHeader
+        stickyHeaderOffsetClassName="top-16"
         columns={[
-          "Deal & type",
+          "Deal",
           "Company",
           "Owner",
           "Stage",
@@ -117,35 +129,35 @@ export default function DealsPage() {
           "Close date",
           "Last activity",
           "Risk indicators",
-          "Open findings",
+          KPI_COPY.dealLinkedFindings.label,
           "",
         ]}
       >
         {crmSimulationDealsWorkspace.list_rows.slice(0, 10).map((deal) => (
           <tr key={deal.deal_id} className="border-t border-line align-top">
-            <td className="px-4 py-4 text-[13px] sm:px-6">
+            <td className="px-4 py-5 text-[13px] sm:px-6">
               <Link href={deal.detail_href} className="font-semibold text-foreground hover:text-brand">
                 {deal.deal_name}
               </Link>
               <p className="mt-1 text-xs text-muted">{deal.deal_id}</p>
             </td>
-            <td className="px-4 py-4 text-[13px] text-muted sm:px-6">{deal.company_name}</td>
-            <td className="px-4 py-4 text-[13px] text-muted sm:px-6">{deal.owner_name}</td>
-            <td className="px-4 py-4 text-[13px] sm:px-6">
+            <td className="px-4 py-5 text-[13px] text-muted sm:px-6">{deal.company_name}</td>
+            <td className="px-4 py-5 text-[13px] text-muted sm:px-6">{deal.owner_name}</td>
+            <td className="px-4 py-5 text-[13px] sm:px-6">
               <Badge tone={stageToneMap[deal.stage as keyof typeof stageToneMap] ?? "neutral"}>
                 {deal.stage}
               </Badge>
             </td>
-            <td className="px-4 py-4 text-[13px] font-medium text-foreground sm:px-6">
+            <td className="px-4 py-5 text-[13px] font-medium text-foreground sm:px-6">
               {currencyFormatter.format(deal.amount)}
             </td>
-            <td className="px-4 py-4 text-[13px] text-muted sm:px-6">
+            <td className="px-4 py-5 text-[13px] text-muted sm:px-6">
               {formatIsoDate(deal.close_date)}
             </td>
-            <td className="px-4 py-4 text-[13px] text-muted sm:px-6">
+            <td className="px-4 py-5 text-[13px] text-muted sm:px-6">
               {deal.last_activity_at ? formatDateTime(deal.last_activity_at) : "No activity"}
             </td>
-            <td className="px-4 py-4 text-[13px] sm:px-6">
+            <td className="px-4 py-5 text-[13px] sm:px-6">
               <div className="flex min-w-[12rem] flex-wrap gap-2">
                 {deal.risk_indicators.slice(0, 3).map((indicator) => (
                   <Badge
@@ -157,10 +169,10 @@ export default function DealsPage() {
                 ))}
               </div>
             </td>
-            <td className="px-4 py-4 text-[13px] text-muted sm:px-6">
+            <td className="px-4 py-5 text-[13px] text-muted sm:px-6">
               {deal.open_findings_count}
             </td>
-            <td className="px-4 py-4 text-[13px] sm:px-6">
+            <td className="px-4 py-5 text-[13px] sm:px-6">
               <Link href={deal.detail_href} className={buttonLinkClassName("secondary", "sm")}>
                 View detail
               </Link>
@@ -175,10 +187,12 @@ export default function DealsPage() {
 function SummaryMetric({
   label,
   value,
+  helper,
   accent = "neutral",
 }: {
   label: string;
   value: string;
+  helper: string;
   accent?: "neutral" | "critical" | "warning";
 }) {
   return (
@@ -195,6 +209,73 @@ function SummaryMetric({
       >
         {value}
       </p>
+      <p className="mt-2 text-[13px] leading-6 text-muted">{helper}</p>
+    </article>
+  );
+}
+
+function DealMobileCard({
+  deal,
+}: {
+  deal: (typeof crmSimulationDealsWorkspace.list_rows)[number];
+}) {
+  return (
+    <article className="rounded-xl border border-line bg-white p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <Link href={deal.detail_href} className="text-[14px] font-semibold text-foreground hover:text-brand">
+            {deal.deal_name}
+          </Link>
+          <p className="mt-1 text-[12px] text-muted">{deal.company_name}</p>
+        </div>
+        <p className="text-right text-[14px] font-semibold text-foreground">
+          {currencyFormatter.format(deal.amount)}
+        </p>
+      </div>
+
+      <div className="mt-4 grid gap-3 rounded-lg bg-surface-muted p-3 text-[12px]">
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-muted">Owner</span>
+          <span className="font-medium text-foreground">{deal.owner_name}</span>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-muted">Stage</span>
+          <Badge tone={stageToneMap[deal.stage as keyof typeof stageToneMap] ?? "neutral"}>
+            {deal.stage}
+          </Badge>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-muted">Close date</span>
+          <span className="font-medium text-foreground">{formatIsoDate(deal.close_date)}</span>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-muted">Last activity</span>
+          <span className="font-medium text-foreground">
+            {deal.last_activity_at ? formatDateTime(deal.last_activity_at) : "No activity"}
+          </span>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-muted">{KPI_COPY.dealLinkedFindings.label}</span>
+          <span className="font-medium text-foreground">{deal.open_findings_count}</span>
+        </div>
+        <div>
+          <p className="text-muted">Risk indicators</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {deal.risk_indicators.slice(0, 3).map((indicator) => (
+              <Badge
+                key={`${deal.deal_id}-${indicator.label}`}
+                tone={severityToneMap[indicator.severity]}
+              >
+                {indicator.label}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Link href={deal.detail_href} className={`${buttonLinkClassName("secondary")} mt-4 w-full`}>
+        View detail
+      </Link>
     </article>
   );
 }

@@ -11,7 +11,7 @@ export const navigationItems: NavigationItem[] = [
   {
     title: "Dashboard",
     href: "/",
-    summary: "See pipeline value at risk, critical findings, and the recommended next action.",
+    summary: "See pipeline value at risk, critical / high findings, and the recommended next action.",
     icon: "dashboard",
   },
   {

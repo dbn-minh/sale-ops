@@ -12,6 +12,7 @@ import {
   crmSimulationFindingsOverview,
   crmSimulationSummary,
 } from "@/lib/data/demo-data";
+import { KPI_COPY } from "@/lib/ui-copy";
 
 export default function SettingsPage() {
   const openDealsCount = crmSimulationData.deals.filter(
@@ -25,37 +26,34 @@ export default function SettingsPage() {
 
   const summaryCards = [
     {
-      label: "Generated findings",
+      label: KPI_COPY.generatedFindings.label,
       value: String(crmSimulationFindingsOverview.total_findings),
       status: "Rule engine live",
       tone: "brand" as const,
-      description:
-        "Real CRM hygiene findings generated deterministically from the simulation dataset.",
+      description: KPI_COPY.generatedFindings.description,
     },
     {
-      label: "Pipeline value at risk",
+      label: KPI_COPY.pipelineValueAtRiskDeduplicated.label,
       value: currencyFormatter.format(
         crmSimulationFindingsOverview.pipeline_value_at_risk,
       ),
-      status: "Revenue signal",
+      status: "Deduplicated exposure",
       tone: "warning" as const,
-      description:
-        "Unique open opportunities touched by active hygiene issues or duplicate-company exposure.",
+      description: KPI_COPY.pipelineValueAtRiskDeduplicated.description,
     },
     {
-      label: "Critical findings",
+      label: KPI_COPY.criticalFindings.label,
       value: String(
         crmSimulationFindingsOverview.by_severity.find(
           (bucket) => bucket.severity === "critical",
         )?.count ?? 0,
       ),
-      status: "Immediate action",
+      status: "Severity = critical",
       tone: "critical" as const,
-      description:
-        "The most time-sensitive revenue exposure currently visible in CRM Simulation Mode.",
+      description: KPI_COPY.criticalFindings.description,
     },
     {
-      label: "Seeded records",
+      label: KPI_COPY.seededCrmRecords.label,
       value: (
         crmSimulationSummary.entity_counts.users +
         crmSimulationSummary.entity_counts.companies +
@@ -66,8 +64,7 @@ export default function SettingsPage() {
       ).toLocaleString(),
       status: "Deterministic seed",
       tone: "neutral" as const,
-      description:
-        "Stable simulation inputs used for the demo, rule engine, and persisted browser workflow.",
+      description: KPI_COPY.seededCrmRecords.description,
     },
   ];
 
@@ -77,7 +74,6 @@ export default function SettingsPage() {
         eyebrow="Settings"
         title="Settings"
         description="Manage CRM Simulation Mode and future integration readiness."
-        badge={<Badge tone="brand">CRM Simulation Mode</Badge>}
       />
 
       <CrmSimulationPanel
